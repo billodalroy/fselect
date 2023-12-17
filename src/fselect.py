@@ -68,7 +68,6 @@ def rank_features(
     rankings = feature_entropies.sort_values(
         by="entropy", ascending=False).reset_index(drop=True)
     rankings["rank"] = rankings.index + 1
-    rankings.set_index("rank", inplace=True)
     return rankings
 
 
@@ -77,6 +76,16 @@ def compute_entropy(dataframe: pd.DataFrame) -> float:
     Function to carry out the mathematical calculations to calculate the
     entropy as defined in the research paper mentioned in the rank features
     function.
+    Parameters
+    ----------
+    dataframe : pd.DataFrame
+        Input dataframe from rank_features.
+
+    Returns
+    -------
+    total_entropy: float
+        Returns the calculated total_entropy of the dataframe
+        based on the calculations suggested in the paper mentioned earlier.
     """
 
     dataframe = deepcopy(dataframe)
@@ -96,6 +105,19 @@ def get_correlated_columns(dataframe: pd.DataFrame,
                            correlation_threshold: float
                            ) -> dict:
     """
+    Function to get correlated columns for each column
+    in the input dataframe based on the correlation threshold.
+    Parameters
+    ----------
+    dataframe: pd.DataFrame
+        Input dataframe from rank_features.
+    correlation_threshold: float
+        The threshold value to identify correlated columns.
+    Returns
+    -------
+    correlated_columns: dict
+        Dictionary with each column as an index and an array
+        of correlated columns for each index element.
     """
 
     correlation_matrix = dataframe.corr()
