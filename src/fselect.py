@@ -8,10 +8,36 @@ from sklearn.metrics import pairwise_distances
 def rank_features(
         dataframe: pd.DataFrame,
         remove_correlated_columns: bool = False,
-        correlation_threshold: float = 0.99
+        correlation_threshold: float = 0.999
 ) -> pd.DataFrame:
     """
+    Main function calling other functions to calculate entropy
+    and ranking the features.
+    Implements a modified version of ARANK algorithm as defined in the paper
+    "Dash, M. and Lie, H. Feature Selection for Clustering"
 
+    Parameters
+    ----------
+    dataframe : pd.DataFrame
+        Input dataframe with continuos (normalized)
+        data with columns which are to be ranked on
+        the basis of importance for further clustering.
+
+    remove_correlated_columns : bool
+        Optional parameter to remove any
+        closely related columns since it effects
+        the entropy measure and hence the rankings.
+        More details on github readme.
+
+    correlation_threshold : float
+        If above parameter is True, set the
+        correlation coefficient threshold to define
+        closely related columns. Defaults to 0.999
+
+    Returns
+    -------
+    rankings : pd.DataFrame
+        dataframe with three columns "rank", "feature", "entropy"
     """
     entropy_values = []
     if remove_correlated_columns:
@@ -49,7 +75,7 @@ def rank_features(
 def compute_entropy(dataframe: pd.DataFrame) -> float:
     """
     Function to carry out the mathematical calculations to calculate the
-    entropy as defined in the research paper mentioned in the rank attributes
+    entropy as defined in the research paper mentioned in the rank features
     function.
     """
 
