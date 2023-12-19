@@ -8,7 +8,7 @@ from a dataset using an entropy measure using fast python libraries: numpy, pand
 
 Install the package:
 
-```  
+```python
 pip install fselect
 ```
 
