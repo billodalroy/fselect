@@ -1,5 +1,9 @@
 # Feature Selection for Clustering: fselect
 
+![](https://img.shields.io/github/license/billodalroy/fselect?color=blue&style=flat-square)
+![](https://img.shields.io/pypi/v/fselect?color=green&style=flat-square)
+[![Downloads](https://pepy.tech/badge/fselect)](https://pepy.tech/project/fselect)
+
 A fast and scalable implementation of A-RANK algorithm as proposed
 by Dash, M. and Liu, H. in their paper "Feature Selection for Clustering" for selecting features
 from a dataset using an entropy measure using fast python libraries: numpy, pandas and scikit-learn.
@@ -8,7 +12,7 @@ from a dataset using an entropy measure using fast python libraries: numpy, pand
 
 Install the package:
 
-```python
+```bash
 pip install fselect
 ```
 
