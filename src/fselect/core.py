@@ -1,5 +1,14 @@
+"""A-RANK feature ranking for clustering.
+
+Implements a modified version of the A-RANK algorithm from
+"Dash, M. and Liu, H. — Feature Selection for Clustering". It ranks the
+continuous features of a pandas DataFrame by an entropy measure, so the most
+informative features for downstream clustering can be selected.
+"""
+
 from copy import deepcopy
 import math
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import pairwise_distances
@@ -10,34 +19,29 @@ def rank_features(
         remove_correlated_columns: bool = False,
         correlation_threshold: float = 0.999
 ) -> pd.DataFrame:
-    """
-    Main function calling other functions to calculate entropy
-    and ranking the features.
-    Implements a modified version of ARANK algorithm as defined in the paper
-    "Dash, M. and Lie, H. Feature Selection for Clustering"
+    """Rank features by an entropy measure for clustering (A-RANK).
+
+    For each feature, the feature (or its correlated group) is dropped and the
+    entropy of the remaining columns is computed; features whose removal leaves
+    higher entropy are ranked as more important.
 
     Parameters
     ----------
-    dataframe : pd.DataFrame
-        Input dataframe with continuos (normalized)
-        data with columns which are to be ranked on
-        the basis of importance for further clustering.
-
+    dataframe : pandas.DataFrame
+        Input data with continuous, normalized columns to be ranked.
     remove_correlated_columns : bool
-        Optional parameter to remove any
-        closely related columns since it effects
-        the entropy measure and hence the rankings.
-        More details on github readme.
-
+        If True, drop each feature's highly-correlated group (rather than just
+        the feature itself) when measuring entropy, since correlated columns
+        skew the measure.
     correlation_threshold : float
-        If above parameter is True, set the
-        correlation coefficient threshold to define
-        closely related columns. Defaults to 0.999
+        Absolute-correlation threshold defining "closely related" columns when
+        ``remove_correlated_columns`` is True. Defaults to 0.999.
 
     Returns
     -------
-    rankings : pd.DataFrame
-        dataframe with three columns "rank", "feature", "entropy"
+    pandas.DataFrame
+        A dataframe with columns ``feature``, ``entropy`` and ``rank``,
+        sorted by entropy descending (rank 1 = most important).
     """
     entropy_values = []
     if remove_correlated_columns:
@@ -72,10 +76,8 @@ def rank_features(
 
 
 def compute_entropy(dataframe: pd.DataFrame) -> float:
-    """
-    Function to carry out the mathematical calculations to calculate the
-    entropy as defined in the research paper mentioned in the rank features
-    function.
+    """Compute the total entropy of a dataframe as defined in the A-RANK paper.
+
     Parameters
     ----------
     dataframe : pd.DataFrame
@@ -84,8 +86,8 @@ def compute_entropy(dataframe: pd.DataFrame) -> float:
     Returns
     -------
     total_entropy: float
-        Returns the calculated total_entropy of the dataframe
-        based on the calculations suggested in the paper mentioned earlier.
+        The calculated total entropy of the dataframe based on the
+        similarity-matrix formulation suggested in the paper.
     """
 
     dataframe = deepcopy(dataframe)
@@ -104,20 +106,20 @@ def compute_entropy(dataframe: pd.DataFrame) -> float:
 def get_correlated_columns(dataframe: pd.DataFrame,
                            correlation_threshold: float
                            ) -> dict:
-    """
-    Function to get correlated columns for each column
-    in the input dataframe based on the correlation threshold.
+    """Map each column to the columns correlated with it above a threshold.
+
     Parameters
     ----------
     dataframe: pd.DataFrame
         Input dataframe from rank_features.
     correlation_threshold: float
         The threshold value to identify correlated columns.
+
     Returns
     -------
     correlated_columns: dict
-        Dictionary with each column as an index and an array
-        of correlated columns for each index element.
+        Dictionary with each column as a key and a list of correlated
+        columns (always including the column itself) as the value.
     """
 
     correlation_matrix = dataframe.corr()
