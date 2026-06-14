@@ -1,8 +1,4 @@
-import sys
-import pytest
 import pandas as pd
-
-sys.path.append('src')
 
 from fselect import compute_entropy, get_correlated_columns, rank_features
 
@@ -52,9 +48,10 @@ def test_rank_features():
         "b": [9, 5, 6, 7]
     })
     rankings = rank_features(df)
-    assert rankings.shape == (2, 2)
+    assert rankings.shape == (2, 3)
+    assert list(rankings.columns) == ["feature", "entropy", "rank"]
+    assert list(rankings["rank"]) == [1, 2]
     assert rankings.iloc[0]['feature'] == "b"
-    assert len(rankings["feature"].values) == len(["a", "b"])
     assert all([a == b for a, b in zip(rankings["feature"].values, ["b", "a"])])
 
     # Test a dataframe with correlated columns
@@ -64,12 +61,5 @@ def test_rank_features():
         "c": [0, 1, 2, 3]
     })
     rankings = rank_features(df)
-    assert rankings.shape == (3, 2)
+    assert rankings.shape == (3, 3)
     assert rankings.iloc[0]['feature'] == "b"
-
-
-if __name__ == "__main__":
-    test_compute_entropy()
-    test_get_correlated_columns()
-    test_rank_features()
-    print("All tests passed!")
